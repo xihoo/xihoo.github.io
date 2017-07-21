@@ -1,0 +1,13 @@
+<!-- Top Navbar 请按照Framework7 material的navbar结构编写代码-->
+<nav class="navbar site-nav">
+	<div class="navbar-inner">
+		<div class="center"><a class="link site-title" href="{{ site.baseurl }}/">{{ site.title }}</a></div>
+		<div class="right">
+			<a class="link page-link" href="{{ site.baseurl }}/">Home</a> 
+			{% for page in site.pages %}{% if page.title %}
+			<a class="link page-link" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
+			{% endif %}{% endfor %}
+			<a href="#" class="link icon-only open-panel menu-icon"><i class="icon icon-bars"></i></a>
+		</div>
+	</div>
+</nav>

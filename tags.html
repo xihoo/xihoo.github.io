@@ -1,0 +1,21 @@
+---
+layout: page
+title: Tags
+description: It is never too late to learn.
+icon-letter: T
+permalink: /tags/
+---
+<div class="content-block">
+	<ul class="tag-list">
+		{% for tag in site.tags %}
+		<li class="tag-item">
+			<h3 class="tag-name"><a name="{{ tag[0] }}">{{ tag[0] }}</a></h3>
+			<ul class="tag-link-list">
+				{% for post in tag[1] %}
+				<li><a class="link" href="{{ post.url | prepend: site.baseurl }}"> {{ post.title }}</a></li>
+				{% endfor %}
+			</ul>
+		</li>
+		{% endfor %}
+	</ul>
+</div>

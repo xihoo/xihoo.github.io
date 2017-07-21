@@ -1,0 +1,106 @@
+---
+layout: default
+---
+<!-- We don't need full layout in this file because this page will be parsed with Ajax. It is just enough to put here .page-->
+<!-- But,But,But for SEO we need full layout -->
+
+<!-- Page, "data-page" contains page name -->
+<div data-page="{% if page.title %}{{ page.title }}{% else %}index{% endif %}" class="page post no-side-panel">
+	{% include nav.html %}
+	<!-- Speed Dial Wrap -->
+	<div class="speed-dial">
+		<!-- FAB inside will open Speed Dial actions -->
+		<a href="#" class="floating-button" style="background-color:#26a69a;background-color:#81C784;">
+			<!-- First icon is visible when Speed Dial actions are closed -->
+			<i class="icon icon-share"></i>
+			<!-- Second icon is visible when Speed Dial actions are opened -->
+			<i class="icon icon-close"></i>
+		</a>
+		<!-- Speed Dial Actions -->
+		<div class="speed-dial-buttons">
+			<!-- First Speed Dial button -->
+			<a class="external" href="http://service.weibo.com/share/share.php?url={{ page.url | prepend: site.baseurl | prepend: site.url }}&title={{ page.title }}" title="Share to sina weibo" target="_blank" style="background-color: #EF5350;">
+				<i class="icon icon-sina"></i>
+			</a>
+			<!-- Second Speed Dial  button -->
+			<a class="external" href="http://www.facebook.com/share.php?u={{ page.url | prepend: site.baseurl | prepend: site.url }}" title="Share to Facebook" target="_blank" style="background-color: #3B5998; ;">
+				<i class="icon icon-facebook"></i>
+			</a>
+			<!-- Third Speed Dial  button -->
+			<a class="external" href="http://twitter.com/intent/tweet?url={{ page.url | prepend: site.baseurl | prepend: site.url }}&text={{ page.title }}" title="Share to Twitter" target="_blank" style="background-color: #2196F3;">
+				<i class="icon icon-twitter"></i>
+			</a>
+		</div>
+	</div>
+	<!-- End of Speed Dial -->
+	<!-- Scrollable page content -->
+	<div class="page-content hide-navbar-on-scroll">
+		{% include header.html  postType=true %}
+		<div class="wrapper">
+			<div class="main-panel">
+				<div class="content-block">
+					<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+						<!--
+						<header class="post-header">
+							<h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+							<p class="post-meta">
+								<time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time>{% if page.author %} • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{{ page.author }}</span></span>{% endif %}
+							</p>
+						</header>
+						-->
+						<div class="post-content" itemprop="articleBody">
+							{{ content }}
+						</div>
+					</article>
+					<ul class="pager">
+						{% if page.previous.url %}
+						<li class="previous">
+							<a class="link" href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}" title="{{page.previous.title}}">&larr; Previous Post</a>
+						</li>
+						{% endif %} {% if page.next.url %}
+						<li class="next">
+							<a class="link" href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" title="{{page.next.title}}">Next Post &rarr;</a>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+				<!-- disqus 评论框 start -->
+				{% if site.disqus_username %}
+				<div class="comment_disqus content-block" data-disqus_identifier="{{page.id}}" data-disqus_url="{{site.url}}{{site.baseurl}}/#!{{site.baseurl}}{{page.url}}" data-disqus_title="{{page.title}}">
+					<div id="disqus_thread" class="disqus-thread"></div>
+				</div>
+				{% endif %}
+				<!-- disqus 评论框 end -->
+				<!-- 多说分享 start -->
+				{% if site.duoshuo_username %}
+				<div class="ds-share flat content-block" data-thread-key="{{page.id}}" data-title="{{page.title}}" data-content="{{ content | strip_html | truncate:80 }} | {{ site.SEOTitle }} " data-url="{{site.url}}{{site.baseurl}}/#!{{site.baseurl}}{{page.url}}">
+				    <div class="ds-share-inline">
+				      <ul  class="ds-share-icons-16">
+				      	
+				      	<li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+				        <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+				        <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+				        <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+				      	
+				      </ul>
+				      <div class="ds-share-icons-more">
+				      </div>
+				    </div>
+				</div>
+				{% endif %}
+				<!-- 多说分享 end -->
+				<!-- 多说评论框 start -->
+				{% if site.duoshuo_username %}
+				<div class="comment_duoshuo content-block"  data-thread-key="{{page.id}}" data-title="{{page.title}}" data-url="{{site.url}}{{site.baseurl}}/#!{{site.baseurl}}{{page.url}}">
+					<div class="ds-thread"   data-thread-key="{{page.id}}" data-title="{{page.title}}" data-url="{{site.url}}{{site.baseurl}}/#!{{site.baseurl}}{{page.url}}"></div>
+				</div>			
+				{% endif %}
+				<!-- 多说评论框 end -->
+			</div>
+			<div class="side-panel">
+				{% include panel-side.html %}
+			</div>
+		</div>
+		{% include footer.html %}
+	</div>
+</div>
