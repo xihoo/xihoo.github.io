@@ -1,8 +1,8 @@
-# Bglky Blog
+# xihoo Blog
 My Blog / Jekyll Theme , SPA and responsive , based on Framework7 and Jekyll.
 
 ## Live Demo
-### [http://bglky.me](http://bglky.me "Bglky Blog")
+### [http://xihoo.xyz](http://xihoo.xyz "Xihoo Blog")
 
 ## Features
 - 单页（支持搜索引擎搜索）
@@ -20,11 +20,11 @@ You can easily get started by modifying `_config.yml`:
 ```
 title: SPA-blog # the title of your blog
 SEOTitle: SPA-blog | 单页-响应式-博客 # the SEOTitle of your blog
-email: bglky.me@gmail.com # your email
-keywords: "周炳光的博客,bglky blog,周炳光,bglky,responsive,blog,framework7,jekyll" # the keywords of your blog
+email: hyh0001@mail.ustc.edu.cn # your email
+keywords: "胡永红的博客,xihoo blog,胡永红,xihoo,responsive,blog,framework7,jekyll" # the keywords of your blog
 description: "An awesome SPA and responsive blog based on Framework7 and Jekyll!" # the description of your blog
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://bglky.me" # the base hostname & protocol for your site
+url: "http://xihoo.xyz" # the base hostname & protocol for your site
 ...
 
 ```
