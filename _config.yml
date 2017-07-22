@@ -31,7 +31,7 @@ ba_track_id: 3a12295eec4bd436a92e0b39d50f5b31
 # disqus
 #disqus_username: bglky
 # duoshuo
-duoshuo_username: bglky
+duoshuo_username: xihoo
 
 
 # Side-panel
@@ -46,12 +46,12 @@ socials: true                           # whether or not using Socials
 introduction: Better late than never.   # One sentence introducing yourself of what you do
 avatar: /img/avatar.jpg                 # the path to your avatar
 #RSS: false
-github_username: bglky
+github_username: xihoo
 #twitter_username: zhoubglky
 #facebook_username: bglky
-zhihu_username: bglky
+zhihu_username: xihoo
 #sina_username: bglky
-segmentfault_username: bglky
+segmentfault_username: xihoo
 
 # Friends
 friends: [
