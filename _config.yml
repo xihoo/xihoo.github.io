@@ -43,13 +43,13 @@ featured-condition-size: 1              # A tag will be featured if the size of 
 
 # Socials
 socials: true                           # whether or not using Socials
-introduction: Better late than never.   # One sentence introducing yourself of what you do
+introduction: 中国科学技术大学14级.   # One sentence introducing yourself of what you do
 avatar: /img/avatar.jpg                 # the path to your avatar
 #RSS: false
 github_username: xihoo
 #twitter_username: zhoubglky
 #facebook_username: bglky
-zhihu_username: hu-yong-hong-17
+#zhihu_username: hu-yong-hong-17
 #sina_username: bglky
 #segmentfault_username: xihoo
 
