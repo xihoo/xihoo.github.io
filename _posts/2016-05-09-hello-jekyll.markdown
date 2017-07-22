@@ -1,11 +1,11 @@
 ---
 layout:     post
-title:      "Jekyll安装 - Windows环境"
-subtitle:   " \"Hello Jekyll, Hello Blog.\""
-date:       2016-05-09 10:25:07 +0800
-author:     "Bglky"
+title:      "C++网络库"
+subtitle:   " \"基于Reactor模式的多线程网络库\""
+date:       2017-05-09 10:25:07 +0800
+author:     "xihoo"
 tags:
-    - 博客
+    - C++
 ---
 
 
