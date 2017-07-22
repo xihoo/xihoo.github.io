@@ -6,10 +6,10 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 # Site settings
-title: XIHOO Blog
-SEOTitle: 胡永红的博客 | Bglky Blog
-email: bglky.me@gmail.com
-keywords: "周炳光,bglky,周炳光的博客,bglky blog,赖柯滢,responsive,blog,framework7,jekyll"
+title: Xihoo Blog
+SEOTitle: 胡永红的博客 | Xihoo Blog
+email: hyh0001@mail.ustc.edu.cn
+keywords: "胡永红,xihoo,胡永红的博客,xihoo blog,responsive,blog,framework7,jekyll"
 description: "My Blog / Jekyll Theme , SPA and responsive , based on Framework7 and Jekyll."
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://xihoo.xyz" # the base hostname & protocol for your site
@@ -56,8 +56,8 @@ segmentfault_username: bglky
 # Friends
 friends: [
     {
-        title: "Bglky",
-        href: "http://bglky.me"
+        title: "Xihoo",
+        href: "http://xihoo.xyz"
     },
     {
         title: "Hansome",
