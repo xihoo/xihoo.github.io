@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "基于Reactor模式的网络库(一)"
+title:      "基于Reactor模式的网络库(二)"
 subtitle:   " \"事件分发对象：Channel class\""
 date:       2017-05-10 
 author:     "xihoo"
