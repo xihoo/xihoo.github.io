@@ -1,11 +1,12 @@
 ---
 layout:     post
-title:      "单页应用异步加载Disqus评论"
-subtitle:   "\"Loading Disqus asynchronously on SPA.\""
-date:       2016-07-26 23:25:07 +0800
-author:     "Bglky"
+title:      "基于Reactor模式的网络库(三)"
+subtitle:   " \"\""
+date:       2017-05-11 
+author:     "xihoo"
 tags:
-    - 博客
+    - C++
+    - Linux网络编程
 ---
 
 ### 1. 动态加载Disqus的embed.js文件
