@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "基于Reactor模式的网络库(三)"
-subtitle:   " \"\""
+subtitle:   " \"IO multiplexing的封装 EPoller class\""
 date:       2017-05-11 
 author:     "xihoo"
 tags:
@@ -9,81 +9,109 @@ tags:
     - Linux网络编程
 ---
 
-### 1. 动态加载Disqus的embed.js文件
+## Reactor模式的关键结构之 EPoller class
 
-``` javascript
+``` c++
 
-// 动态加载js 函数
-function loadJS(url, callback, async, id) {
-	var script = document.createElement("script");
-	if (async) script.async = async;//是否异步加载
-	if (id) script.id = id;
-	script.src = url;
-	if (callback) {//加载完毕回调函数
+// Network/reactor/src_code/EPoller.h
+#ifndef MUDUO_NET_EPOLLER_H
+#define MUDUO_NET_EPOLLER_H
 
-		//方法1：IE8及以下不支持addEventListener
-		script.addEventListener("load", function(e) {
-			callback(null, e);
-		}, false);
+#include <map>
+#include <vector>
 
-		//方法2：兼容IE6/7/8
-		/*
-		if (script.readyState) {
-			script.onreadystatechange = function () {
-				if (script.readyState == "loaded" || script.readyState == "complete") {
-					script.onreadystatechange = null;
-					callback();
-				}
-			};
-		} else {
-			script.onload = function () {
-				callback();
-			};
-		}
-		*/
+#include "datetime/Timestamp.h"
+#include "EventLoop.h"
 
-	}
-	(document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]).appendChild(script);
+struct epoll_event;
+
+namespace muduo
+{
+
+class Channel;
+
+class EPoller : boost::noncopyable
+{
+ public:
+  typedef std::vector<Channel*> ChannelList;
+
+  EPoller(EventLoop* loop);
+  ~EPoller();
+
+  Timestamp poll(int timeoutMs, ChannelList* activeChannels);
+  void updateChannel(Channel* channel);
+  void removeChannel(Channel* channel);
+
+  void assertInLoopThread() { ownerLoop_->assertInLoopThread(); }
+
+ private:
+  static const int kInitEventListSize = 16;
+
+  void fillActiveChannels(int numEvents,
+                          ChannelList* activeChannels) const;
+  void update(int operation, Channel* channel);
+
+  typedef std::vector<struct epoll_event> EventList;
+  typedef std::map<int, Channel*> ChannelMap;
+
+  EventLoop* ownerLoop_;
+  int epollfd_;
+  EventList events_;
+  ChannelMap channels_;
+};
+
+}
+#endif  // MUDUO_NET_EPOLLER_H
+
+```
+
+***
+
+## EPoller对象的成员解释
+
+* **Poll(int timeoutMs,ChannelList* activeChannels)**：Poller的核心功能，通过poll系统调用将就绪事件集合通过activeChannels返回，并`EventLoop::loop()->Channel::handelEvent()`执行相应的就绪事件回调
+* **updateChannel(Channel* channel)**：`Channel::update(this)->EventLoop::updateChannel(Channel*)->Poller::updateChannel(Channel*)`负责维护和更新pollfs_和channels_,更新或添加Channel到Poller的pollfds_和channels_中(主要是文件描述符fd对应的Channel可能想修改已经向poll注册的事件或者fd想向poll注册事件)
+* **removeChannel(Channel* channel)**：通过EventLoop::removeChannel(Channel*)->Poller::removeChannle(Channel*)注销pollfds_和channels_中的Channel
+* **fillActiveChannels(int numEvents,ChannelList* activeChannels) const**：遍历pollfds_找出就绪事件的fd填入activeChannls,这里不能一边遍历pollfds_一边执行`Channel::handleEvent()`因为后者可能添加或者删除Poller中含Channel的pollfds_和channels_(遍历容器的同时存在容器可能被修改是危险的),所以Poller仅仅是负责IO复用，不负责事件分发(交给Channel处理)
+* **ownerLoop_**：隶属的EventLoop
+* **pollfds_**：监听事件集合
+* **channels_**：文件描述符fd到Channel的映射
+
+***
+
+## Epoller原理解析
+
+Epoller的核心函数poll：
+
+``` c++
+
+Timestamp EPoller::poll(int timeoutMs, ChannelList* activeChannels)
+{
+  int numEvents = ::epoll_wait(epollfd_,
+                               &*events_.begin(),
+                               static_cast<int>(events_.size()),
+                               timeoutMs);
+  Timestamp now(Timestamp::now());
+  if (numEvents > 0)
+  {
+    LOG_TRACE << numEvents << " events happended";
+    fillActiveChannels(numEvents, activeChannels);
+    if (implicit_cast<size_t>(numEvents) == events_.size())
+    {
+      events_.resize(events_.size()*2);
+    }
+  }
+  else if (numEvents == 0)
+  {
+    LOG_TRACE << " nothing happended";
+  }
+  else
+  {
+    LOG_SYSERR << "EPoller::poll()";
+  }
+  return now;
 }
 
-// 动态加载embed.js,把disqus_username改成你自己的
-loadJS("http://disqus_username.disqus.com/embed.js", function() { /*加载完回调函数*/ }, true, "disqus");
-
 ```
 
-
-### 2. 异步加载Disqus的评论
-
-``` javascript
-
-DISQUS.reset({
-	reload: true,
-	config: function() {
-		this.page.identifier = "填写页面的id";
-		this.page.url = "填写页面的url";
-		this.page.title = "填写页面的标题";
-		this.language = "填写Disqus界面的语言";//中文是zh , 英文是en
-	}
-});
-
-```
-
-### 3. 单页应用如何加载Disqus
-
-#### 主要思路：
-
-1. 在首次访问有评论的页面时 动态加载embed.js，并且回调DISQUS.reset()。
-2. 后续访问有评论的页面时直接DISQUS.reset()。
-
-#### 具体实施：
-
-具体可参照[我blog的代码][3]
-
-### 相关参考
-- [Using Disqus on AJAX sites][1]
-- [ An example DISQUS.reset recipe][2]
-
-
-[1]:https://help.disqus.com/customer/portal/articles/472107-using-disqus-on-ajax-sites
-[2]:https://github.com/disqus/DISQUS-API-Recipes/blob/master/snippets/js/disqus-reset/disqus_reset.html
-[3]:https://github.com/bglky/bglky.github.io/blob/master/js/my-app.js
+* poll函数调用epoll获得当前活动的IO事件，然后填充调用方传入的activeChannels，并返回return的时刻
