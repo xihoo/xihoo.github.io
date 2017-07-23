@@ -101,7 +101,9 @@ class EventLoop : boost::noncopyable
 
 ```
 EventLoop: 事件循环，一个线程一个事件循环即one loop per thread，其主要功能是运行事件循环如等待事件发生然后处理发生的事件
+
 ***
+
 ### EventLoop成员解释
 
 * **loop()函数**：EventLoop的主体,用于事件循环，`Eventloop::loop()->Poller::Poll()`获得就绪的事件集合并通过Channel::handleEvent()执行就绪事件回调
