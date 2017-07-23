@@ -1,43 +1,101 @@
 ---
 layout:     post
-title:      "C++网络库"
-subtitle:   " \"基于Reactor模式的多线程网络库\""
+title:      "基于Reactor模式的多线程网络库(一)"
+subtitle:   " \"EventLoop事件循环\""
 date:       2017-05-09 10:25:07 +0800
 author:     "xihoo"
 tags:
     - C++
+    - Linux网络编程
 ---
 
 
-### 依赖环境安装
+### Reactor模式
 
- 1. 下载 <a class="external" target="_blank" href="http://rubyinstaller.org/downloads/">Ruby 和 Ruby Development</a> 安装包（**注意系统位数以及 ruby 和 devkit 的版本对应**，我的是 rubyinstaller-2.3.0-x64.exe 和 DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe ）
- 2. 安装 Ruby（我的是安装到 C:\Ruby23-x64 ，**注意安装路径不能有空格**）（安装时记住勾上  **Add Ruby executables to your PATH** 添加到环境变量），`ruby -v` 检查是否安装成功
- 3. 解压 Ruby Development Kit 安装包（我的是解压到 C:\RubyDevKit ）
- 4. cd 到 Ruby Development Kit 的解压目录（我的是 `cd C:\RubyDevkit` ）
- 5. `ruby dk.rb init`
- 6. `ruby dk.rb install`
- 
-（`gem -v`检查是否安装成功，至此 jekyll 的依赖环境安装完成）
+  >Wikipedia:"The reactor design pattern is an event handling pattern for handling service requests delivered concurrently by one or more inputs. The service handler then demultiplexes the incoming requests and dispatches them synchronously to associated request handlers."
+
+  Reactor模式由事件驱动，有一个或多个并发输入源，有一个Service Handler，有多个Request Handlers；这个Service Handler会同步的将输入的请求（Event）多路复用的分发给相应的Request Handler
+
+  ![](/img/Reactor_Simple.png)
+
+### Reactor模式最基本的class--EvenLoop
+
+``` c++
+// Network/reactor/src_code
+#ifndef xihoo_NET_EVENTLOOP_H
+#define xihoo_NET_EVENTLOOP_H
+
+#include "datetime/Timestamp.h"
+#include "thread/Mutex.h"
+#include "thread/Thread.h"
+#include "Callbacks.h"
+#include "TimerId.h"
+
+#include <boost/scoped_ptr.hpp>
+#include <vector>
+
+namespace xihoo
+{
+
+class Channel;
+class EPoller;
+class TimerQueue;
+
+class EventLoop : boost::noncopyable
+{
+ public:
+  typedef boost::function<void()> Functor;
+  EventLoop();
+  ~EventLoop();
+  void loop();
+  void quit();
+  Timestamp pollReturnTime() const { return pollReturnTime_; }
+  void runInLoop(const Functor& cb);
+  void queueInLoop(const Functor& cb);
+  TimerId runAt(const Timestamp& time, const TimerCallback& cb);
+  TimerId runAfter(double delay, const TimerCallback& cb);
+  TimerId runEvery(double interval, const TimerCallback& cb);
+  void cancel(TimerId timerId);
+  void wakeup();
+  void updateChannel(Channel* channel);
+  void removeChannel(Channel* channel);
+
+  void assertInLoopThread()
+  {
+    if (!isInLoopThread())
+    {
+      abortNotInLoopThread();
+    }
+  }
+
+  bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
+
+ private:
+
+  void abortNotInLoopThread();
+  void handleRead();  
+  void doPendingFunctors();
+
+  typedef std::vector<Channel*> ChannelList;
+
+  bool looping_; 
+  bool quit_; 
+  bool callingPendingFunctors_; 
+  const pid_t threadId_;
+  Timestamp pollReturnTime_;
+  boost::scoped_ptr<EPoller> poller_;
+  boost::scoped_ptr<TimerQueue> timerQueue_;
+  int wakeupFd_;
+  boost::scoped_ptr<Channel> wakeupChannel_;
+  ChannelList activeChannels_;
+  MutexLock mutex_;
+  std::vector<Functor> pendingFunctors_;
+};
+
+}
+
+#endif  
 
 
-### Jekyll安装
-
- 1.  `gem install jekyll`（国内可能会被墙，可换成淘宝镜像，请自行百度）; `jekyll -v` 检查是否安装成功
-
-### 创建jekyll项目
-
- 1. 在要创建项目的目录下
-   `jekyll new myblog` （myblog 为项目名）
-
-### 运行jekyll项目
- 1. `cd myblog` 进入项目目录
- 2. `jekyll serve` 运行项目
- 3. 浏览器打开  `http://localhost:4000`  ，即可看到项目页面
-
-> From 2016, 'pygments' is unsupported on GitHub Pages. Use **'rouge'** for highlighting instead.
-
-### 更多安装参考
- 1. <a class="external" target="_blank" href="https://jekyllrb.com/">Jekyll 官网</a>
- 2. <a class="external" target="_blank" href="http://jekyll-windows.juthilo.com/">Run Jekyll on Windows</a>
+``` C++
 
