@@ -97,5 +97,5 @@ class EventLoop : boost::noncopyable
 #endif  
 
 
-``` C++
+```
 
