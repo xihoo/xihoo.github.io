@@ -18,6 +18,8 @@ tags:
 在Channel中封装了函数`enableReading()` `enableWriting()` `disableWriting()` `disableAll()`
 其中调用了`update()`函数。  
 
+***
+
 ## 监听IO事件
 
 EventLoop的`loop()`函数调用了EPoller中的`poll()`函数，`poll()`函数监听注册的文件描述符(IO事件)
