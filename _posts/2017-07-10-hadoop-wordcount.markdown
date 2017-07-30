@@ -73,7 +73,7 @@ public static class IntSumReducer extends Reducer<Text,IntWritable,Text,IntWrita
 
 遍历values求和即得到某个单词的计数值。
 
-### main函数
+### 3.main函数
 
 Job对象负责管理和运行一个计算任务。
 
