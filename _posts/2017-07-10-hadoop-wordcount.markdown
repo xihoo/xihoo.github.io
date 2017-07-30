@@ -107,7 +107,7 @@ public static void main(String[] args) throws Exception {
 
 ***
 
-##简析WordCount的处理过程
+## 简析WordCount的处理过程
 
 每一个文件对应一个split，传入Mapper的是每一行的内容，map之后是一个个单词，计数值都为1，combine过程
 累加了计数值，传入Reducer之后排序，对相同key值的计数值累加，最后输出。
